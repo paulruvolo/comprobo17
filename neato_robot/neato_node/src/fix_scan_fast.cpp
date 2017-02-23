@@ -22,13 +22,13 @@ void scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
   sensor_msgs::LaserScan scan_mod(*scan_in);
   scan_mod.time_increment = (float)1.0/(360*5);
   scan_mod.scan_time = (float)1.0/5;
-  if(!listener_->waitForTransform(
-        scan_in->header.frame_id,
-        "odom",
-        scan_in->header.stamp + ros::Duration().fromSec(scan_mod.ranges.size()*scan_mod.time_increment),
-        ros::Duration(1.0))){
-     return;
-  }
+  // if(!listener_->waitForTransform(
+  //       scan_in->header.frame_id,
+  //       "odom",
+  //       scan_in->header.stamp + ros::Duration().fromSec(scan_mod.ranges.size()*scan_mod.time_increment),
+  //       ros::Duration(1.0))){
+  //    return;
+  // }
 
   double t_start = ros::Time::now().toSec();
   int best_matching_offset = -1;
@@ -69,7 +69,7 @@ void scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
     best_matching_offset = 0;
   }
   scan_mod.header.stamp = scan_in->header.stamp - ros::Duration(best_matching_offset/1000.0);
-  std::cout << "PROCESSED A SCAN!!! " << best_matching_offset << " " << ros::Time::now().toSec() - t_start << std::endl;
+  std::cout << "PROCESSED A SCAN!!! " << best_matching_offset << " " << ros::Time::now() - scan_mod.header.stamp << std::endl;
   // Do something with cloud.
   pub.publish(scan_mod);
   try {
